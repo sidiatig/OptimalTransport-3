@@ -6,18 +6,20 @@
  */
 
 #include "Point.h"
+#include <iostream>
+#include <string>
 
-Point::Point(const double x, const double y, const double radius) :sf::CircleShape() {
+Point::Point(const double x, const double y, const double radius, const int R, const int G, const int B) :sf::CircleShape() {
 	// TODO Auto-generated constructor stub
 //	this->x = x;
 //	this->y = y;
 
 //	m_shape = new sf::CircleShape();
 	setPosition(x,y);
-	setFillColor(sf::Color(100, 250, 50));
+	setFillColor(sf::Color(R, G, B));
 	setRadius(radius);
 
-	setOrigin(0,0);
+	setOrigin(radius,radius);
 }
 
 Point::~Point() {
@@ -30,4 +32,10 @@ Point::Point(const Point &p){
 	setRadius(p.getRadius());
 
 	setOrigin(p.getOrigin());
+}
+
+std::ostream& operator<< (std::ostream& stream, const Point& p){
+	stream << p.getPosition().x << ";" << p.getPosition().y << ";" << p.getRadius() << ";"
+			<< std::to_string(p.getFillColor().r) << ";" << std::to_string(p.getFillColor().g) << ";" << std::to_string(p.getFillColor().b) << ";" << std::endl;
+	return stream;
 }

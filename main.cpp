@@ -13,6 +13,8 @@
 #include "PointCloud.h"
 #include "Point.h"
 
+#include "SimpleTransport.h"
+
 #include <iostream>
 
 using namespace std;
@@ -20,33 +22,23 @@ using namespace std;
 int main(void) {
 
 	PointCloud pCloud(10,sf::Color(100,100,100));
-	pCloud.addPoint(100,100);
-	pCloud.addPoint(100,150);
-	pCloud.addPoint(250,500);
-	pCloud.addPoint(290,400);
-	pCloud.addPoint(400,500);
-	pCloud.addPoint(200,500);
+	pCloud.readFromFile("./PointClouds/pc1.txt");
 
-	PointCloud pCopy = pCloud;
-	pCopy.translate(600,300);
-//	pCopy.m_color = sf::Color(250,100,250);
-	pCopy.setColor(sf::Color(250,100,250));
+	PointCloud pCloud2(10,sf::Color(100,100,250));
+	pCloud2.readFromFile("./PointClouds/pc2.txt");
 
-	cout << pCloud.points.size() << endl;
-	for(int i = 0; i < pCloud.points.size(); i++){
-//		cout << "old " << pCloud.points[i]->getPosition().x << " " << pCloud.points[i]->getPosition().y << endl;
-//		cout << "new " << pCopy.points[i].getPosition().x << " " << pCopy.points[i].getPosition().y << endl;
-	}
-
-
+	SimpleTransport trans(pCloud,pCloud2);
+	trans.bruteForce();
 
 	RenderWindow win;
 	win.addPointCloud(&pCloud);
-	win.addPointCloud(&pCopy);
+	win.addPointCloud(&pCloud2);
+	win.addSimpleTransport(trans);
 	win.run();
 
 
-
+	pCloud.writeToFile("./PointClouds/pc1.txt");
+	pCloud2.writeToFile("./PointClouds/pc2.txt");
 
 	return EXIT_SUCCESS;
 }

@@ -13,6 +13,7 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <string>
 
 class PointCloud : public sf::Transformable{
 public:
@@ -21,12 +22,17 @@ public:
 
 	PointCloud(const PointCloud &obj);
 
-	void addPoint(const double x = 0, const double y = 0);
+	void addPoint(const double x = 0, const double y = 0, const double r = 10, const int R = 100, const int G = 100, const int B = 100);
 //	void generateCloud(const double xLeft, const double xRight, const double yLeft, const double yRight);
 
 	void translate(const double x = 0, const double y = 0);
 
+	void readFromFile(const std::string &path);
+	void writeToFile(const std::string path) const;
+
 	void setColor(sf::Color col);
+
+	unsigned int size();
 
 	std::vector<Point> points;
 	double radius;	// each point in the pointCloud has this radius
