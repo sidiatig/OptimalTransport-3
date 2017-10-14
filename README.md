@@ -2,7 +2,7 @@
 
 ![alternate text](/PointClouds/Points.png)
 
-#Usage
+# Usage
 Move with right mouse button.
 Zoom in and out with mouse wheel.
 Drag and Drop the Points with the leftmouse button.
