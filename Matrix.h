@@ -10,6 +10,8 @@
 
 #include <vector>
 
+#include <ostream>
+
 class Matrix {
 public:
 	Matrix();
@@ -21,8 +23,13 @@ public:
 	std::vector<std::vector<int>> m_values;
 
 	void init();
+	void identity();
 
 	bool nextPermutation();
+
+	friend std::ostream& operator<< (std::ostream& stream, Matrix& m);
+
+//	friend Matrix& operator*(Matrix &m, Matrix& m);
 
 	unsigned int rows;
 	unsigned int columns;

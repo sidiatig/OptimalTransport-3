@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+#include <algorithm>
+
 using namespace std;
 
 GlobalTransport::GlobalTransport(){
@@ -22,7 +24,7 @@ GlobalTransport::GlobalTransport(PointCloud &a, PointCloud &b) {
 
 	m_matrix.rows = A->size();
 	m_matrix.columns = B->size();
-	m_matrix.init();
+	m_matrix.identity();
 
 	A->createDistanceMatrix();
 	B->createDistanceMatrix();
@@ -43,12 +45,15 @@ void GlobalTransport::bruteForce(){
 
 	// need to sort first in order to iterate over all permutations
 	sort(m_matrix.m_values.begin(),m_matrix.m_values.end());
-	sort(B->m_distances.m_values.begin(),B->m_distances.m_values.end());
+	sort(B->points.begin(),B->points.end());
 
 	int count = 0;
 	do {
 
 		Matrix cur = m_matrix;
+
+		B->createDistanceMatrix();
+
 		double cur_val = evaluatePairings(A->m_distances, B->m_distances);
 
 		if(cur_val <= best_val){
@@ -56,13 +61,24 @@ void GlobalTransport::bruteForce(){
 			best_matrix = cur;
 		}
 
+
+
 		count++;
 		cout << count << ": " << cur_val << endl;
-	} while(m_matrix.nextPermutation() && B->m_distances.nextPermutation());
+
+		cout << cur << endl;
+
+		cout << "A:\n" << A->m_distances << endl;
+		cout << "B:\n" << B->m_distances << endl;
+
+	} while(m_matrix.nextPermutation() && next_permutation(B->points.begin(),B->points.end()));
+//	B->m_distances.nextPermutation();
 
 	cout << "best distance: " << best_val << endl;
 
 	m_matrix = best_matrix;
+
+	cout << m_matrix;
 }
 
 // the distance-matrices of mA and mB need to be permutated at this point

@@ -40,6 +40,11 @@ std::ostream& operator<< (std::ostream& stream, const Point& p){
 	return stream;
 }
 
+bool operator< (const Point& p, const Point& p2){
+
+	return true;
+}
+
 double euclideanDistance(const Point &a, const Point &b){
 
 	double dx = b.getPosition().x-a.getPosition().x;

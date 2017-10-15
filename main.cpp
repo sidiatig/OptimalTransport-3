@@ -28,7 +28,7 @@ int main(void) {
 	PointCloud pCloud2(10,sf::Color(100,100,250));
 	pCloud2.readFromFile("./PointClouds/pc2.txt");
 
-//	SimpleTransport trans(pCloud,pCloud2);
+	SimpleTransport trans(pCloud,pCloud2);
 //	trans.bruteForce();
 
 	GlobalTransport trans2(pCloud,pCloud2);
@@ -41,6 +41,9 @@ int main(void) {
 
 	win.trans = TRANSPORT::GLOBAL;
 	win.addGlobalTransport(trans2);
+
+//	win.trans = TRANSPORT::SIMPLE;
+//	win.addSimpleTransport(trans);
 
 	win.run();
 

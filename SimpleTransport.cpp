@@ -25,7 +25,7 @@ SimpleTransport::SimpleTransport(PointCloud &a, PointCloud &b) {
 
 	m_matrix.rows = A->size();
 	m_matrix.columns = B->size();
-	m_matrix.init();
+	m_matrix.identity();
 }
 
 SimpleTransport::~SimpleTransport() {

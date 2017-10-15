@@ -122,8 +122,8 @@ void PointCloud::createDistanceMatrix(){
 	m_distances.rows = points.size();
 	m_distances.init();
 
-	for(unsigned int i = 0; i < points.size()-1; i++){
-		for(unsigned int j = i+1; j < points.size(); j++){
+	for(unsigned int i = 0; i < points.size(); i++){
+		for(unsigned int j = 0; j < points.size(); j++){
 			m_distances.m_values[i][j] = euclideanDistance(points[i],points[j]);
 		}
 	}

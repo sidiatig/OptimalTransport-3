@@ -28,6 +28,8 @@ public:
 	Point(const Point &p);
 
 	friend std::ostream& operator<< (std::ostream& stream, const Point& p);
+
+	friend bool operator< (const Point& p, const Point& p2);
 };
 
 double euclideanDistance(const Point &a, const Point &b);
