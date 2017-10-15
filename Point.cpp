@@ -39,3 +39,12 @@ std::ostream& operator<< (std::ostream& stream, const Point& p){
 			<< std::to_string(p.getFillColor().r) << ";" << std::to_string(p.getFillColor().g) << ";" << std::to_string(p.getFillColor().b) << ";" << std::endl;
 	return stream;
 }
+
+double euclideanDistance(const Point &a, const Point &b){
+
+	double dx = b.getPosition().x-a.getPosition().x;
+	double dy = b.getPosition().y-a.getPosition().y;
+
+	double d = dx*dx + dy*dy;
+	return sqrt(d);
+}

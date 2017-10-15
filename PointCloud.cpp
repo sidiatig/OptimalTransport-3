@@ -18,6 +18,11 @@ PointCloud::PointCloud(const double radius, const sf::Color &col) {
 	this->radius = radius;
 
 	m_color = col;
+
+	m_distances.columns = points.size();
+	m_distances.rows = points.size();
+	m_distances.init();
+
 }
 
 PointCloud::~PointCloud() {
@@ -110,3 +115,18 @@ void PointCloud::writeToFile(const std::string path) const{
 
 	myfile.close();
 }
+
+void PointCloud::createDistanceMatrix(){
+
+	m_distances.columns = points.size();
+	m_distances.rows = points.size();
+	m_distances.init();
+
+	for(unsigned int i = 0; i < points.size()-1; i++){
+		for(unsigned int j = i+1; j < points.size(); j++){
+			m_distances.m_values[i][j] = euclideanDistance(points[i],points[j]);
+		}
+	}
+}
+
+

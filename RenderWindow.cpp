@@ -22,6 +22,8 @@ RenderWindow::RenderWindow() {
 
 	width = 800;
 	height = 600;
+
+
 }
 
 RenderWindow::~RenderWindow() {
@@ -43,6 +45,8 @@ void RenderWindow::run()
     bool moving = false;
     bool objMoving = false;
     sf::CircleShape * movingObj;
+
+    PointCloud * movingPointCloud;
 
     //buttons
     sf::RectangleShape calculateButton(sf::Vector2f(200, 100));
@@ -78,6 +82,7 @@ void RenderWindow::run()
                             	if (distance(oldPos,pointClouds[i]->points[j].getPosition()) <  pointClouds[i]->points[j].getRadius()){
                             		objMoving = true;
                             		movingObj = &pointClouds[i]->points[j];
+                            		movingPointCloud = pointClouds[i];
                             	}
                             }
                         }
@@ -88,8 +93,20 @@ void RenderWindow::run()
                     if (event.mouseButton.button == 1) {
                         moving = false;
                     }
-                    else if (event.mouseButton.button == 0) {
+                    else if (event.mouseButton.button == 0 && objMoving == true) {
                         objMoving = false;
+
+						movingPointCloud->createDistanceMatrix();
+
+                        if(trans == SIMPLE){
+							m_simpleTransport.bruteForce();
+							addSimpleTransport(m_simpleTransport);
+                        }
+                        else if(trans == GLOBAL){
+
+                        	m_globalTransport.bruteForce();
+                        	addGlobalTransport(m_globalTransport);
+                        }
                     }
                     break;
 
@@ -157,8 +174,8 @@ void RenderWindow::run()
 
         window.display();
 
-        m_simpleTransport.bruteForce();
-        addSimpleTransport(m_simpleTransport);
+//        m_simpleTransport.bruteForce();
+//        addSimpleTransport(m_simpleTransport);
     }
 }
 
@@ -207,22 +224,47 @@ void RenderWindow::addSimpleTransport(SimpleTransport &s){
         	}
         }
     }
-
-//	double dist = sqrt((lastNode->x - po->getX()) * (lastNode->x - po->getX()) + (lastNode->y - po->getY()) * (lastNode->y-po->getY()));
-//					sf::RectangleShape *s = new sf::RectangleShape(sf::Vector2f(dist, m_curveSize));
-//					s->setPosition(lastNode->x, lastNode->y);
-//					// we need to rotate the rectangle to approximate the curve. When the y-value is decreasing, we have to rotate the other way around
-//					if(po->getY() - lastNode->y > 0){
-//						double alpha = acos((po->getX() - lastNode->x)/ dist) * (180 / M_PI);
-//						s->setOrigin(dist/2.0, m_curveSize/2.0);
-//						s->rotate(alpha);
-//					} else{
-//						double alpha = acos((po->getX() - lastNode->x)/ -dist) * (180 / M_PI);
-//						s->setOrigin(dist/2.0, m_curveSize/2.0);
-//						s->rotate(alpha);
-//					}
-//					s->setFillColor(re->m_color);
-//
-//					re->m_shape.push_back(s);
 }
 
+void RenderWindow::addGlobalTransport(GlobalTransport &s){
+	m_globalTransport = s;
+
+	double thickness = 3;
+
+	m_connections.clear();
+
+    for(unsigned int i = 0; i < m_globalTransport.A->size(); i++){
+        for(unsigned int j = 0; j < m_globalTransport.B->size(); j++){
+        	if(m_globalTransport.m_matrix.m_values[i][j] == 1){
+        		double dx = m_globalTransport.A->points[i].getPosition().x
+							- m_globalTransport.B->points[j].getPosition().x;
+
+        		double dy = m_globalTransport.A->points[i].getPosition().y
+							- m_globalTransport.B->points[j].getPosition().y;
+
+        		double dist = sqrt(dx*dx + dy*dy);
+
+				sf::RectangleShape *s = new sf::RectangleShape(sf::Vector2f(dist, thickness));
+
+//				s->setPosition(m_simpleTransport.A->points[i].getPosition());
+
+				s->setPosition(m_globalTransport.A->points[i].getPosition().x,
+						m_globalTransport.A->points[i].getPosition().y - thickness/2.0);
+				s->setFillColor(sf::Color(250,0,0));
+
+				if(dy > 0){
+
+					double alpha = -acos((dx)/ -dist) * (180 / M_PI);
+//					s->setOrigin(dist/2.0, thickness/2.0);
+					s->rotate(alpha);
+				} else{
+					double alpha = acos((dx)/ -dist) * (180 / M_PI);
+//					s->setOrigin(dist/2.0, thickness/2.0);
+					s->rotate(alpha);
+				}
+
+				m_connections.push_back(s);
+        	}
+        }
+    }
+}

@@ -14,6 +14,7 @@
 #include "Point.h"
 
 #include "SimpleTransport.h"
+#include "GlobalTransport.h"
 
 #include <iostream>
 
@@ -27,13 +28,20 @@ int main(void) {
 	PointCloud pCloud2(10,sf::Color(100,100,250));
 	pCloud2.readFromFile("./PointClouds/pc2.txt");
 
-	SimpleTransport trans(pCloud,pCloud2);
-	trans.bruteForce();
+//	SimpleTransport trans(pCloud,pCloud2);
+//	trans.bruteForce();
+
+	GlobalTransport trans2(pCloud,pCloud2);
+	trans2.bruteForce();
 
 	RenderWindow win;
 	win.addPointCloud(&pCloud);
 	win.addPointCloud(&pCloud2);
-	win.addSimpleTransport(trans);
+	//win.addSimpleTransport(trans);
+
+	win.trans = TRANSPORT::GLOBAL;
+	win.addGlobalTransport(trans2);
+
 	win.run();
 
 

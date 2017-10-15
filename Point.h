@@ -30,4 +30,6 @@ public:
 	friend std::ostream& operator<< (std::ostream& stream, const Point& p);
 };
 
+double euclideanDistance(const Point &a, const Point &b);
+
 #endif /* POINT_H_ */

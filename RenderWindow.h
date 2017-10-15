@@ -12,12 +12,18 @@
 #include "PointCloud.h"
 
 #include "SimpleTransport.h"
+#include "GlobalTransport.h"
 
 #include <SFML/Graphics.hpp>
 
 /*
  * Class responsible for drawing the point clouds using SFML.
  */
+
+enum TRANSPORT{
+	SIMPLE,
+	GLOBAL
+};
 
 class RenderWindow {
 public:
@@ -29,6 +35,7 @@ public:
 	void run();
 
 	void addSimpleTransport(SimpleTransport &s);
+	void addGlobalTransport(GlobalTransport &s);
 
 	unsigned int width;
 	unsigned int height;
@@ -37,7 +44,11 @@ public:
 
 	std::vector<sf::Shape*> m_connections;
 
+	TRANSPORT trans;
+
 	SimpleTransport m_simpleTransport;
+
+	GlobalTransport m_globalTransport;
 };
 
 #endif /* RENDERWINDOW_H_ */

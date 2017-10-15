@@ -15,6 +15,8 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+#include "Matrix.h"
+
 class PointCloud : public sf::Transformable{
 public:
 	PointCloud(const double radius = 1, const sf::Color &col = sf::Color(100,100,100));
@@ -36,6 +38,10 @@ public:
 
 	std::vector<Point> points;
 	double radius;	// each point in the pointCloud has this radius
+
+	Matrix m_distances;
+	void createDistanceMatrix();
+
 
 	sf::Color m_color;
 };
