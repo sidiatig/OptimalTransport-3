@@ -66,3 +66,45 @@ std::ostream& operator<< (std::ostream& stream, Matrix& m){
 	}
 	return stream;
 }
+
+void Matrix::readFromFile(const std::string &path){
+
+	cerr << "readSettings from " << path << endl;
+
+	m_values.clear();
+
+		string line;
+		ifstream myfile (path);
+		if (myfile.is_open())
+		{
+			while ( getline (myfile,line) )
+			{
+				vector<string> result;
+				stringstream ss;
+				ss << line;
+				while( ss.good() )
+				{
+				    string substr;
+				    getline( ss, substr, ';' );
+				    result.push_back( substr );
+				}
+
+				if(result[0].c_str()[0] != '#'){
+
+					std::vector<double> row;
+
+					for(unsigned int i = 0; i < result.size(); i++){
+						row.push_back(std::atof(result[i].c_str()));
+					}
+
+					m_values.push_back(row);
+
+
+				}
+
+			}
+			myfile.close();
+		}
+
+		else cout << "Unable to open file " << path << endl;
+}

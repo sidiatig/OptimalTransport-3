@@ -25,6 +25,7 @@ public:
 
 	void bruteForce();
 
+
 	PointCloud *A;
 	PointCloud *B;
 

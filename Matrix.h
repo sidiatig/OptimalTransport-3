@@ -11,6 +11,9 @@
 #include <vector>
 
 #include <ostream>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 class Matrix {
 public:
@@ -20,12 +23,14 @@ public:
 
 	Matrix(unsigned int row, unsigned int col);
 
-	std::vector<std::vector<int>> m_values;
+	std::vector<std::vector<double>> m_values;
 
 	void init();
 	void identity();
 
 	bool nextPermutation();
+
+	void readFromFile(const std::string &path);
 
 	friend std::ostream& operator<< (std::ostream& stream, Matrix& m);
 

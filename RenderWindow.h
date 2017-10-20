@@ -15,6 +15,7 @@
 #include "GlobalTransport.h"
 
 #include <SFML/Graphics.hpp>
+#include "Matrix.h"
 
 /*
  * Class responsible for drawing the point clouds using SFML.
@@ -22,7 +23,8 @@
 
 enum TRANSPORT{
 	SIMPLE,
-	GLOBAL
+	GLOBAL,
+	EXTERN
 };
 
 class RenderWindow {
@@ -40,6 +42,11 @@ public:
 	unsigned int width;
 	unsigned int height;
 
+	PointCloud* A;
+	PointCloud* B;
+
+	double scalingFactor;
+
 	std::vector<PointCloud*> pointClouds;
 
 	std::vector<sf::Shape*> m_connections;
@@ -49,6 +56,13 @@ public:
 	SimpleTransport m_simpleTransport;
 
 	GlobalTransport m_globalTransport;
+
+	void readInMatchingMeasure(Matrix &m, const std::string &path);
+
+	void createConnectionsWithMatchingMeasure(std::vector<sf::Shape*> &con, const Matrix &m);
+
+	Matrix m_matchingMeasure;
+
 };
 
 #endif /* RENDERWINDOW_H_ */

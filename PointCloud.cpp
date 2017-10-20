@@ -23,6 +23,7 @@ PointCloud::PointCloud(const double radius, const sf::Color &col) {
 	m_distances.rows = points.size();
 	m_distances.init();
 
+	scalingFactor = 50;
 }
 
 PointCloud::~PointCloud() {
@@ -46,6 +47,8 @@ PointCloud::PointCloud(const PointCloud &obj) {
    points = obj.points;
 
    m_color = obj.m_color;
+
+   scalingFactor = obj.scalingFactor;
 }
 
 void PointCloud::setColor(sf::Color col){
@@ -82,7 +85,7 @@ void PointCloud::readFromFile(const std::string &path){
 				}
 
 				if(result[0].c_str()[0] != '#'){
-					addPoint(std::atoi(result[0].c_str()), std::atoi(result[1].c_str()), std::atoi(result[2].c_str()),
+					addPoint(std::atoi(result[0].c_str()), std::atoi(result[1].c_str()), std::atof(result[2].c_str()),
 							std::atoi(result[3].c_str()), std::atoi(result[4].c_str()), std::atoi(result[5].c_str()));
 				}
 
@@ -129,4 +132,9 @@ void PointCloud::createDistanceMatrix(){
 	}
 }
 
-
+void PointCloud::calculateTotalMass(){
+	m_totalMass = 0;
+	for(unsigned int i = 0; i < points.size(); i++){
+		m_totalMass += points[i].getRadius();
+	}
+}

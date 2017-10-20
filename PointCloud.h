@@ -39,9 +39,14 @@ public:
 	std::vector<Point> points;
 	double radius;	// each point in the pointCloud has this radius
 
+	double scalingFactor;
+
 	Matrix m_distances;
 	void createDistanceMatrix();
 
+	void calculateTotalMass();
+
+	double m_totalMass;
 
 	sf::Color m_color;
 };

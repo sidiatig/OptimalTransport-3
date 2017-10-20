@@ -23,7 +23,7 @@ RenderWindow::RenderWindow() {
 	width = 800;
 	height = 600;
 
-
+	scalingFactor = 50;
 }
 
 RenderWindow::~RenderWindow() {
@@ -106,6 +106,16 @@ void RenderWindow::run()
 
                         	m_globalTransport.bruteForce();
                         	addGlobalTransport(m_globalTransport);
+                        }
+                        else if(trans == EXTERN){
+
+                        	cerr << "Calling R-script here!" << endl;
+
+                        	string Rcall = "./Rscripts/./LOPgeneral3by3.R";
+                        	system(Rcall.c_str());
+
+                    		readInMatchingMeasure(m_matchingMeasure, "./MatchingMeasures/mymatrix.csv");
+                    		createConnectionsWithMatchingMeasure(m_connections,m_matchingMeasure);
                         }
                     }
                     break;
@@ -262,6 +272,75 @@ void RenderWindow::addGlobalTransport(GlobalTransport &s){
 //					s->setOrigin(dist/2.0, thickness/2.0);
 					s->rotate(alpha);
 				}
+
+				m_connections.push_back(s);
+        	}
+        }
+    }
+}
+
+
+void RenderWindow::readInMatchingMeasure(Matrix &m, const std::string &path){
+	m.readFromFile(path);
+	cerr << "Measure:\n" << m << endl;
+
+	double sum = 0.0;
+	for(unsigned int i = 0; i < m.m_values.size(); i++){
+		for(unsigned int j = 0; j < m.m_values[i].size(); j++){
+			sum += m.m_values[i][j];
+		}
+	}
+
+
+
+	if(fabs(sum - 1.0) > 0.1)
+		cerr << "WARNING: Measure does not sum to 1!\n"
+				"sum = " << sum << endl;
+}
+
+void RenderWindow::createConnectionsWithMatchingMeasure(std::vector<sf::Shape*> &con, const Matrix &m){
+
+	double thickness = 0;
+
+	m_connections.clear();
+
+	A->calculateTotalMass();
+	B->calculateTotalMass();
+
+    for(unsigned int i = 0; i < A->size(); i++){
+        for(unsigned int j = 0; j < B->size(); j++){
+        	// only draw a line if there is actually some mass transported between the points
+        	thickness = m.m_values[i][j] * A->m_totalMass*2;
+        	if(thickness > 0){
+        		double dx = A->points[i].getPosition().x
+							- B->points[j].getPosition().x;
+
+        		double dy = A->points[i].getPosition().y
+							- B->points[j].getPosition().y;
+
+        		double dist = sqrt(dx*dx + dy*dy);
+
+				sf::RectangleShape *s = new sf::RectangleShape(sf::Vector2f(dist, thickness));
+
+				s->setFillColor(sf::Color(250,0,0));
+
+				double alpha = 0;
+				if(dy > 0){
+					alpha = -acos((dx)/ -dist) * (180 / M_PI);
+//					s->setOrigin(dist/2.0, thickness/2.0);
+
+				} else{
+					alpha = acos((dx)/ -dist) * (180 / M_PI);
+//					s->setOrigin(dist/2.0, thickness/2.0);
+				}
+
+
+				s->setPosition(A->points[i].getPosition().x,
+								A->points[i].getPosition().y);
+
+				s->setOrigin(0,thickness/2.0);
+
+				s->rotate(alpha);
 
 				m_connections.push_back(s);
         	}
