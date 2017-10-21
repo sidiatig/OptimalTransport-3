@@ -24,6 +24,7 @@ RenderWindow::RenderWindow() {
 	height = 600;
 
 	scalingFactor = 50;
+	m_connectionsVisible = true;
 }
 
 RenderWindow::~RenderWindow() {
@@ -111,7 +112,7 @@ void RenderWindow::run()
 
                         	cerr << "Calling R-script here!" << endl;
 
-                        	string Rcall = "./Rscripts/./LOPgeneral3by3.R";
+                        	string Rcall = "./Rscripts/./LOPgeneralNbyN.R";
                         	system(Rcall.c_str());
 
                     		readInMatchingMeasure(m_matchingMeasure, "./MatchingMeasures/mymatrix.csv");
@@ -281,16 +282,30 @@ void RenderWindow::addGlobalTransport(GlobalTransport &s){
 
 
 void RenderWindow::readInMatchingMeasure(Matrix &m, const std::string &path){
+
+	bool old = false;
+	Matrix cpy = m;
+	// check if the matrix changed
+	if(m.m_values.size() != 0 && m.m_values[0].size() != 0){
+		old = true;
+	}
+
+
 	m.readFromFile(path);
 	cerr << "Measure:\n" << m << endl;
 
 	double sum = 0.0;
+	double diff = 0.0;
 	for(unsigned int i = 0; i < m.m_values.size(); i++){
 		for(unsigned int j = 0; j < m.m_values[i].size(); j++){
 			sum += m.m_values[i][j];
+			if(old)
+				diff += fabs(cpy.m_values[i][j] - m.m_values[i][j]);
 		}
 	}
 
+	if(diff == 0)
+		cerr << "WARNING: Measure did not change! (bool old = " << old << ")" << endl;
 
 
 	if(fabs(sum - 1.0) > 0.1)

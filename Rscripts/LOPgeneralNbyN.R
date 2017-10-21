@@ -62,6 +62,29 @@ createDMatrix <- function(Dx,Dy,eps){
   return(D)
 }
 
+createAMatrix <- function(xSize, ySize){
+  
+  A <- matrix(0,xSize + ySize,xSize*ySize)
+  
+  # row constraints
+  for(i in 1:xSize){
+    for(j in 1:ySize){
+      A[i,j+(i-1)*ySize] = 1
+    }
+  }
+  
+  # column constraints
+  for(i in (xSize+1):nrow(A)){
+    for(j in 1:ncol(A)){
+      #print(paste0("j%%ySize", j%%ySize, " i-xSize ", i-xSize))
+      if(j%%ySize == (i-xSize)%%ySize){
+        A[i,j] = 1
+      }
+    }
+  }
+  
+  return(A)
+}
 #---------------------------------------------------------------------------
 setwd("/home/willy/8.Semester/Liebscher/OptimalTransport/MatchingMeasures/")
 
@@ -80,53 +103,31 @@ library(quadprog)
 b_0 = c(measure1,measure2)
 
 # must be a (2*6)x9-matrix
-A = matrix(
-  c(1,1,1, 0,0,0, 0,0,0,
-    0,0,0, 1,1,1, 0,0,0,
-    0,0,0, 0,0,0, 1,1,1,
-    
-    1,0,0, 1,0,0, 1,0,0,
-    0,1,0, 0,1,0, 0,1,0,
-    0,0,1, 0,0,1, 0,0,1), # the data elements 
-  nrow=6,              # number of rows 
-  ncol=9,              # number of columns 
-  byrow = TRUE)
+# A = matrix(
+#   c(1,1,1, 0,0,0, 0,0,0,
+#     0,0,0, 1,1,1, 0,0,0,
+#     0,0,0, 0,0,0, 1,1,1,
+#     
+#     1,0,0, 1,0,0, 1,0,0,
+#     0,1,0, 0,1,0, 0,1,0,
+#     0,0,1, 0,0,1, 0,0,1), # the data elements 
+#   nrow=6,              # number of rows 
+#   ncol=9,              # number of columns 
+#   byrow = TRUE)
 
 
-Dmat = createDMatrix(distances1,distances2,1000000)
+Dmat = createDMatrix(distances1,distances2,50000000)
 Dmat
-dvec       <- c(0,0,0, 0,0,0, 0,0,0)
+dvec       <- c(rep(0,length(measure1)*length(measure2)))
+
+A = createAMatrix(length(measure1),length(measure2))
 sol <- solve.QP(Dmat,dvec,t(A),bvec=b_0,meq = nrow(A))
 
 
 
-out = matrix(sol$solution, nrow=3, ncol=3)
+
+
+out = matrix(sol$solution, nrow=length(measure1), ncol=length(measure2))
 write.table(t(out), file="mymatrix.csv", row.names=FALSE, col.names=FALSE, sep = ";")
-
-
-# A = matrix(
-#   c(1,1,0,0,0,0,
-#     0,0,1,1,0,0,
-#     1,0,1,0,0,0,
-#     0,1,0,1,0,0,
-#     0,0,0,0,1,0,
-#     0,0,0,0,0,1,
-#     
-#     -1,-1,0,0,0,0,
-#     0,0,-1,-1,0,0,
-#     -1,0,-1,0,0,0,
-#     0,-1,0,-1,0,0,
-#     0,0,0,0,-1,0,
-#     0,0,0,0,0,-1), # the data elements 
-#   nrow=12,              # number of rows 
-#   ncol=6,              # number of columns 
-#   byrow = TRUE)
-# a <- c(0,0,0,0,1,1)
-# b_0 <- c(0.5,0.5,0.5,0.5, 1,1,  -0.5,-0.5,-0.5,-0.5, -1,-1)
-# sol <- solveLP(a,b_0,A,maximum=FALSE)
-# 
-# out = matrix(sol$solution, nrow=2, ncol=2)
-# 
-# write.table(out, file="mymatrix.csv", row.names=FALSE, col.names=FALSE, sep = ";")
 
 

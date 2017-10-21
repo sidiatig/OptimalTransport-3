@@ -50,6 +50,7 @@ public:
 	std::vector<PointCloud*> pointClouds;
 
 	std::vector<sf::Shape*> m_connections;
+	bool m_connectionsVisible;
 
 	TRANSPORT trans;
 
